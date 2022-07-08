@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('./public'))
 app.use(express.json())
 
-app.use('/todos', tasks)
+app.use('/todos', todos)
 
 const port = process.env.PORT || 4000
 
