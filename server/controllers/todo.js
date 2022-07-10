@@ -18,7 +18,20 @@ const createTodo = async (req, res) => {
   }
 }
 
-const getTodo = async (req, res) => {}
+const getTodo = async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id)
+    if (todo == null) {
+      return res.status(404).json({ successful: false, message: 'Not found' })
+    }
+    return res.json({
+      successful: true,
+      message: todo,
+    })
+  } catch (error) {
+    return res.status(500).json({ successful: false, message: error.message })
+  }
+}
 
 const allTodos = (req, res) => {}
 
