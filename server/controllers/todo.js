@@ -1,90 +1,70 @@
 const Todo = require('../model/todoSchema')
+const asyncWrap = require('../../middleware/async')
 
-const createTodo = async (req, res) => {
+const createTodo = asyncWrap(async (req, res) => {
   const { name, completed } = req.body
   const newTodo = new Todo({
     name,
     completed,
   })
+  await newTodo.save()
+  return res.status(200).json({
+    successful: true,
+    message: newTodo,
+  })
+})
 
-  try {
-    await newTodo.save()
-    return res.status(200).json({
-      successful: true,
-      message: newTodo,
-    })
-  } catch (error) {
-    return res.status(500).json({ successful: false, message: error.message })
+const getTodo = asyncWrap(async (req, res) => {
+  const todo = await Todo.findById(req.params.id)
+  if (todo == null) {
+    return res.status(404).json({ successful: false, message: 'Not found' })
   }
-}
+  return res.json({
+    successful: true,
+    message: todo,
+  })
+})
 
-const getTodo = async (req, res) => {
-  try {
-    const todo = await Todo.findById(req.params.id)
-    if (todo == null) {
-      return res.status(404).json({ successful: false, message: 'Not found' })
-    }
+const allTodos = asyncWrap(async (req, res) => {
+  Todo.find({}, '', function (err, allTodos) {
     return res.json({
       successful: true,
-      message: todo,
+      message: allTodos,
     })
-  } catch (error) {
-    return res.status(500).json({ successful: false, message: error.message })
+  })
+})
+
+const updateTodo = asyncWrap(async (req, res) => {
+  const id = req.params.id
+  const changeTodo = req.body
+  const options = { new: true }
+
+  const newUpdate = await Todo.findByIdAndUpdate(id, changeTodo, options)
+
+  if (newUpdate == null) {
+    return res
+      .status(404)
+      .json({ successful: false, message: 'Todo not found' })
   }
-}
 
-const allTodos = async (req, res) => {
-  try {
-    Todo.find({}, '', function (err, allTodos) {
-      return res.json({
-        successful: true,
-        message: allTodos,
-      })
-    })
-  } catch (error) {
-    return res.status(500).json({ successful: false, message: error.message })
+  return res.json({
+    successful: true,
+    message: newUpdate,
+  })
+})
+const deleteTodo = asyncWrap(async (req, res) => {
+  const id = req.params.id
+  const removeTodo = await Todo.findOneAndDelete(id)
+  if (!removeTodo) {
+    return res
+      .status(404)
+      .json({ successful: false, message: `No Todo with ${id}` })
   }
-}
-
-const updateTodo = async (req, res) => {
-  try {
-    const id = req.params.id
-    const changeTodo = req.body
-    const options = { new: true }
-
-    const newUpdate = await Todo.findByIdAndUpdate(id, changeTodo, options)
-
-    if (newUpdate == null) {
-      return res
-        .status(404)
-        .json({ successful: false, message: 'Todo not found' })
-    }
-
-    return res.json({
-      successful: true,
-      message: newUpdate,
-    })
-  } catch (error) {
-    return res.status(500).json({ successful: false, message: error.message })
-  }
-}
-const deleteTodo = async (req, res) => {
-  try {
-    const id = req.params.id
-    const removeTodo = await Todo.findOneAndDelete(id)
-    if (!removeTodo) {
-      return res
-        .status(404)
-        .json({ successful: false, message: `No Todo with ${id}` })
-    }
-    return res.json({
-      successful: true,
-      message: removeTodo,
-    })
-  } catch (error) {
-    return res.status(500).json({ successful: false, message: error.message })
-  }
-}
+  return res.json({
+    successful: true,
+    message: removeTodo,
+  })
+})
 
 module.exports = {
   allTodos,
