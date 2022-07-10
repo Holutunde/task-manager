@@ -4,10 +4,12 @@ const bodyParser = require('body-parser')
 require('dotenv').config()
 const todos = require('./server/routes/todos')
 const connectDB = require('./database/db')
+const notFound = require('./middleware/notFound')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('./public'))
 app.use(express.json())
+app.use(notFound)
 
 app.use('/todos', todos)
 
