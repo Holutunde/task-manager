@@ -46,7 +46,28 @@ const allTodos = async (req, res) => {
   }
 }
 
-const updateTodo = async (req, res) => {}
+const updateTodo = async (req, res) => {
+  try {
+    const id = req.params.id
+    const changeTodo = req.body
+    const options = { new: true }
+
+    const newUpdate = await Todo.findByIdAndUpdate(id, changeTodo, options)
+
+    if (newUpdate == null) {
+      return res
+        .status(404)
+        .json({ successful: false, message: 'Todo not found' })
+    }
+
+    return res.json({
+      successful: true,
+      message: newUpdate,
+    })
+  } catch (error) {
+    return res.status(400).json({ successful: false, message: error.message })
+  }
+}
 const deleteTodo = async (req, res) => {}
 
 module.exports = {

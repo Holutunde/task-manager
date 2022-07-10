@@ -10,6 +10,6 @@ const {
 } = require('../controllers/todo')
 
 router.route('/').get(allTodos).post(createTodo)
-router.route('/:id').get(getTodo).put(updateTodo).delete(deleteTodo)
+router.route('/:id').get(getTodo).patch(updateTodo).delete(deleteTodo)
 
 module.exports = router
