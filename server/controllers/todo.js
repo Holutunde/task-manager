@@ -33,7 +33,18 @@ const getTodo = async (req, res) => {
   }
 }
 
-const allTodos = (req, res) => {}
+const allTodos = async (req, res) => {
+  try {
+    Todo.find({}, '', function (err, allTodos) {
+      return res.json({
+        successful: true,
+        message: allTodos,
+      })
+    })
+  } catch (error) {
+    return res.status(500).json({ successful: false, message: error.message })
+  }
+}
 
 const updateTodo = async (req, res) => {}
 const deleteTodo = async (req, res) => {}
