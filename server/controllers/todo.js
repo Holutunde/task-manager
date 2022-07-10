@@ -14,7 +14,7 @@ const createTodo = async (req, res) => {
       message: newTodo,
     })
   } catch (error) {
-    return res.status(400).json({ successful: false, message: error.message })
+    return res.status(500).json({ successful: false, message: error.message })
   }
 }
 
@@ -65,10 +65,26 @@ const updateTodo = async (req, res) => {
       message: newUpdate,
     })
   } catch (error) {
-    return res.status(400).json({ successful: false, message: error.message })
+    return res.status(500).json({ successful: false, message: error.message })
   }
 }
-const deleteTodo = async (req, res) => {}
+const deleteTodo = async (req, res) => {
+  try {
+    const id = req.params.id
+    const removeTodo = await Todo.findOneAndDelete(id)
+    if (!removeTodo) {
+      return res
+        .status(404)
+        .json({ successful: false, message: `No Todo with ${id}` })
+    }
+    return res.json({
+      successful: true,
+      message: removeTodo,
+    })
+  } catch (error) {
+    return res.status(500).json({ successful: false, message: error.message })
+  }
+}
 
 module.exports = {
   allTodos,
