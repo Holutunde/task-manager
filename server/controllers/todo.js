@@ -15,10 +15,11 @@ const createTodo = asyncWrap(async (req, res) => {
   })
 })
 
-const getTodo = asyncWrap(async (req, res) => {
-  const todo = await Todo.findById(req.params.id)
+const getTodo = asyncWrap(async (req, res, next) => {
+  const { id } = req.params
+  const todo = await Todo.findById(id)
   if (todo == null) {
-    return res.status(404).json({ successful: false, message: 'Not found' })
+    return next(createCustomError(`Task with id : ${id} not found`, 404))
   }
   return res.json({
     successful: true,
@@ -26,7 +27,7 @@ const getTodo = asyncWrap(async (req, res) => {
   })
 })
 
-const allTodos = asyncWrap(async (req, res) => {
+const allTodos = asyncWrap(async (req, res, next) => {
   Todo.find({}, '', function (err, allTodos) {
     return res.json({
       successful: true,
@@ -43,9 +44,7 @@ const updateTodo = asyncWrap(async (req, res) => {
   const newUpdate = await Todo.findByIdAndUpdate(id, changeTodo, options)
 
   if (newUpdate == null) {
-    return res
-      .status(404)
-      .json({ successful: false, message: 'Todo not found' })
+    return next(createCustomError(`Task with id : ${id} not found`, 404))
   }
 
   return res.json({
@@ -57,9 +56,7 @@ const deleteTodo = asyncWrap(async (req, res) => {
   const id = req.params.id
   const removeTodo = await Todo.findOneAndDelete(id)
   if (!removeTodo) {
-    return res
-      .status(404)
-      .json({ successful: false, message: `No Todo with ${id}` })
+    return next(createCustomError(`Task with id : ${id} not found`, 404))
   }
   return res.json({
     successful: true,
