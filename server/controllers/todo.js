@@ -1,5 +1,6 @@
 const Todo = require('../model/todoSchema')
 const asyncWrap = require('../../middleware/async')
+const { createCustomError } = require('../../error/customError')
 
 const createTodo = asyncWrap(async (req, res) => {
   const { name, completed } = req.body
