@@ -4,6 +4,7 @@ const asyncWrap = (func) => {
       await func(req, res, next)
     } catch (error) {
       next(error)
+      //express handling error using next method
     }
   }
 }

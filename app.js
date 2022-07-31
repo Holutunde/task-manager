@@ -16,7 +16,7 @@ app.use('/todos', todos)
 app.use(notFound)
 app.use(errorHandler)
 
-const port = process.env.PORT || 4000
+const port = process.env.PORT || 5000
 
 const start = async () => {
   try {
