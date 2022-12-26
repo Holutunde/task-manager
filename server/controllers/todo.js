@@ -4,6 +4,7 @@ const { createCustomError } = require('../../error/customError')
 
 const createTodo = asyncWrap(async (req, res) => {
   const { name, completed } = req.body
+
   const newTodo = new Todo({
     name,
     completed,
@@ -17,7 +18,8 @@ const createTodo = asyncWrap(async (req, res) => {
 
 const getTodo = asyncWrap(async (req, res, next) => {
   const { id } = req.params
-  const todo = await Todo.findById(id)
+  const user_id = req.user._id
+  const todo = await TodofindOne({ _id: id, userId: user_id })
   if (todo == null) {
     return next(createCustomError(`Task with id : ${id} not found`, 404))
   }
@@ -28,7 +30,8 @@ const getTodo = asyncWrap(async (req, res, next) => {
 })
 
 const allTodos = asyncWrap(async (req, res, next) => {
-  Todo.find({}, '', function (err, allTodos) {
+  const user_id = req.user._id
+  Todo.find({ userId: user_id }, function (err, allTodos) {
     return res.json({
       successful: true,
       message: allTodos,

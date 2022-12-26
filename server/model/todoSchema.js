@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const todoSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+  },
   name: {
     type: String,
     required: [true, 'must provide name'],
