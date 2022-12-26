@@ -6,12 +6,14 @@ const todos = require('./server/routes/todos')
 const connectDB = require('./database/db')
 const notFound = require('./middleware/notFound')
 const errorHandler = require('./middleware/errorHandler')
+const users = require('./server/routes/user')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('./public'))
 app.use(express.json())
 
 app.use('/todos', todos)
+app.use('/user', users)
 
 app.use(notFound)
 app.use(errorHandler)
