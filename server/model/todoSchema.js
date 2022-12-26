@@ -4,6 +4,7 @@ const { Schema } = mongoose
 const todoSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
+    required: true,
   },
   name: {
     type: String,

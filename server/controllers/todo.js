@@ -4,10 +4,11 @@ const { createCustomError } = require('../../error/customError')
 
 const createTodo = asyncWrap(async (req, res) => {
   const { name, completed } = req.body
-
+  const user_id = req.user._id
   const newTodo = new Todo({
     name,
     completed,
+    userId: user_id,
   })
   await newTodo.save()
   return res.status(200).json({
@@ -31,6 +32,7 @@ const getTodo = asyncWrap(async (req, res, next) => {
 
 const allTodos = asyncWrap(async (req, res, next) => {
   const user_id = req.user._id
+  console.log(user_id)
   Todo.find({ userId: user_id }, function (err, allTodos) {
     return res.json({
       successful: true,
@@ -43,8 +45,13 @@ const updateTodo = asyncWrap(async (req, res) => {
   const id = req.params.id
   const changeTodo = req.body
   const options = { new: true }
+  const user_id = req.user._id
 
-  const newUpdate = await Todo.findByIdAndUpdate(id, changeTodo, options)
+  const newUpdate = await Todo.findOneAndUpdate(
+    { _id: id, userId: user_id },
+    changeTodo,
+    options,
+  )
 
   if (newUpdate == null) {
     return next(createCustomError(`Task with id : ${id} not found`, 404))
@@ -57,7 +64,8 @@ const updateTodo = asyncWrap(async (req, res) => {
 })
 const deleteTodo = asyncWrap(async (req, res) => {
   const id = req.params.id
-  const removeTodo = await Todo.findOneAndDelete(id)
+  const user_id = req.user._id
+  const removeTodo = await Todo.findOneAndDelete({ _id: id, userId: user_id })
   if (!removeTodo) {
     return next(createCustomError(`Task with id : ${id} not found`, 404))
   }
