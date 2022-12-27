@@ -48,3 +48,14 @@ exports.login = async (req, res) => {
     userId: user._id.toString(),
   })
 }
+
+const userLogout = async (req, res) => {
+  const userToken = await UserToken.findOne({ token: req.body.refreshToken })
+
+  if (!userToken)
+    return res.status(200).json(handleResponse({}, 'Logged Out Sucessfully'))
+
+  await userToken.remove()
+
+  res.status(200).json(handleResponse({}, 'Logged Out Sucessfully'))
+}
