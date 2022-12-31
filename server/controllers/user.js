@@ -1,6 +1,7 @@
 const User = require('../model/userSchema')
 const bcrypt = require('bcryptjs')
 const { generateTokens } = require('../../utils/generateToken')
+const UserToken = require('../model/UserToken')
 
 exports.registerUser = async (req, res) => {
   const { name, email, password } = req.body
@@ -49,13 +50,12 @@ exports.login = async (req, res) => {
   })
 }
 
-const userLogout = async (req, res) => {
+exports.logout = async (req, res) => {
   const userToken = await UserToken.findOne({ token: req.body.refreshToken })
 
-  if (!userToken)
-    return res.status(200).json(handleResponse({}, 'Logged Out Sucessfully'))
+  if (!userToken) return res.status(201).json('Logged Out Sucessfully')
 
   await userToken.remove()
 
-  res.status(200).json(handleResponse({}, 'Logged Out Sucessfully'))
+  res.status(200).json('Logged Out Sucessfully')
 }
